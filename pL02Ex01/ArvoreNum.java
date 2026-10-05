@@ -4,6 +4,8 @@
 // ArvBinBuscaNum.
 import java.util.Scanner;
 import ArvBinBuscaNum.ArvBinBuscaNum;
+import java.util.ArrayList;
+import ArvBinBuscaNum.ArvBinBuscaNum.No;
 
 public class ArvoreNum {
 	public static void main(String[] args) {
@@ -41,11 +43,15 @@ public class ArvoreNum {
 		
 			if (valor == -999)
 				break;
-			
-			if (arv.pesquisaValor(valor) != null)
-				System.out.println("O valor " + valor + " foi encontrado na arvore");
-			else
+			ArrayList<No> caminho = arv.pesquisaCaminho(valor); 
+			if (caminho == null)
 				System.out.println("O valor " + valor + " NAO EXISTE na arvore");
+			else
+				for(int i = caminho.size() - 1; i >= 0; i--)
+					System.out.print(caminho.get(i).getValor() + ((caminho.get(i).getQuant() > 1 ) ? " [" + caminho.get(i).getQuant() + "]" : "")  + " -> ");
+				if(caminho != null)
+				System.out.println("raiz");
+				
 		}
 	}
 }

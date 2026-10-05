@@ -2,7 +2,10 @@
 //	Classe para Arvore Binaria de Busca de numeros (inteiros)
 //  a ser utilizada como base para o Exercicio 1 da Lista 2 de ED.
 //
+
 package ArvBinBuscaNum;
+
+import java.util.ArrayList;
 
 public class ArvBinBuscaNum {
 	// Enumeracao para indicar as subarvores de um no
@@ -172,26 +175,49 @@ public class ArvBinBuscaNum {
 	// Rotina inicial para encaminhar a pesquisa.
 	
 		No procurado = new No(v);
-		return pesquisaValorRec(procurado, this.getRaiz());	
+		ArrayList<No> caminho = new ArrayList<>();
+		return pesquisaValorRec(procurado, this.getRaiz(), caminho);	
 	}
 
+	public ArrayList<No> pesquisaCaminho(int v){
+		ArrayList<No> caminho = new ArrayList<>();
+		No procurado = new No(v);
 
-	public No pesquisaValorRec(No procurado, No atual) {
+		if(pesquisarCaminhoRec(procurado, this.getRaiz(), caminho))
+			return caminho;
+
+		return null;
+	}
+
+	public boolean pesquisarCaminhoRec(No procurado, No atual, ArrayList<No> caminho ){
+		if(atual == null)
+			return false;
+		caminho.add(atual);
+		if(atual.equals(procurado))
+			return true;
+		else
+			if(procurado.getValor() < atual.getValor())
+				return pesquisarCaminhoRec(procurado, atual.getRef(ladoArv.esq), caminho);
+			else
+				return pesquisarCaminhoRec(procurado, atual.getRef(ladoArv.dir), caminho);
+	}
+
+	public No pesquisaValorRec(No procurado, No atual, ArrayList<No> caminho) {
 	// Pesquisa se um valor informado existe ou nao na arvore. Caso exista, 
 	// retorna sua referencia, caso nao exista, retorna nulo. Faz a busca de
 	// forma RECURSIVA (nao tem looping: a rotina chama a si mesma para 
 	// prosseguir a busca)
-	
 		if (atual == null)				// Arvore vazia
 			return null;
 		
-		if (atual.equals(procurado))	// Valor foi encontrado
+		caminho.add(atual);
+		if (atual.equals(procurado))
 			return atual;
 		else
 			if (procurado.getValor() < atual.getValor())
-				return pesquisaValorRec(procurado, atual.getRef(ladoArv.esq));
+				return pesquisaValorRec(procurado, atual.getRef(ladoArv.esq), caminho);
 			else
-				return pesquisaValorRec(procurado, atual.getRef(ladoArv.dir));
+				return pesquisaValorRec(procurado, atual.getRef(ladoArv.dir), caminho);
 	}
 	
 	public int contaNos(No r) {
