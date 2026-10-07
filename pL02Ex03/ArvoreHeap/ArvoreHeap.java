@@ -1,15 +1,7 @@
-//
-//	Classe para Arvore Binaria de Busca de numeros (inteiros)
-//  a ser utilizada como base para o Exercicio 1 da Lista 2 de ED.
-//
+package ArvoreHeap;
 
-package ArvBinBuscaNum;
-
-import java.util.ArrayList;
-
-public class ArvBinBuscaNum {
-	// Enumeracao para indicar as subarvores de um no
-	public enum ladoArv {esq, dir};
+public class ArvoreHeap {
+    public enum ladoArv {esq, dir};
 
 	public class No {
 	// Classe que define a estrutura e operacoes basicas de um no de arvore
@@ -17,15 +9,15 @@ public class ArvBinBuscaNum {
 		int valor;
 		No esq;
 		No dir;
-		int quant;
+        int Max = 0;
+        int Min = 0;
 
 		public No(int v) {
 		// Construtor da classe, o no criado sera uma folha com o valor
 		// recebido
-				this.valor = v;
-				this.esq = null;
-				this.dir = null;
-				this.quant = 1;	
+			this.valor = v;
+			this.esq = null;
+			this.dir = null;
 		}
 
 		public void setValor(int v) {
@@ -56,31 +48,9 @@ public class ArvBinBuscaNum {
 			
 			return this.dir;
 		}
+    }
 
-		public void setQuant(int q) {
-		// Atribui a quantidade q ao no referenciado
-			this.quant = q;
-		}
-		
-		public int getQuant() {
-		// Retorna a quantidade de vezes que o valor armazenado no no foi inserido
-			return this.quant;
-		}
-
-		public boolean equals(Object o) {
-		// Compara o conteudo util de dois nos, retornando true se forem
-		// identicos e false em caso contrario
-			No outro = (No) o;
-			return (this.valor == outro.valor);
-		}
-	}
-
-	private No raiz;		// Armazenara o endereco da raiz geral da arvore
-
-	public ArvBinBuscaNum() {
-	// Construtor da classe ArvBinBuscaNum. Cria uma arvore vazia (raiz nula)
-		this.raiz = null;
-	}
+    private No raiz;		// Armazenara o endereco da raiz geral da arvore
 
 	public No getRaiz() {
 	// Retorna o conteudo da raiz geral da arvore (nulo ou o endereco do no raiz)
@@ -102,11 +72,6 @@ public class ArvBinBuscaNum {
 	// O novo no sera uma folha, com valor v
 	
 		// Instanciando um novo no na memoria
-		if(pesquisaValor(v) != null){
-			pesquisaValor(v).setQuant(pesquisaValor(v).getQuant() + 1);
-			return true;
-		}
-		else {
 		No noh = new No(v);
 		
 		if (noh == null)
@@ -118,13 +83,12 @@ public class ArvBinBuscaNum {
 		if (pai == null)
 			this.setRaiz(noh);
 		else
-			if (v <= pai.getValor())
-				pai.setRef(ladoArv.esq, noh);
-			else
-				pai.setRef(ladoArv.dir, noh);
+            if(noh.getValor() <= pai.getValor()){
+                
+            }
+
 		
 			return true;
-		}
 	}
 	
 	private No achaPai(No novoNo, No candidato) {
@@ -147,61 +111,14 @@ public class ArvBinBuscaNum {
 					return achaPai(novoNo, candidato.getRef(ladoArv.dir));
 	}	
 
-	public void imprimeArv(No r, int nivel) {
-	// Imprime o conteudo de uma arvore binaria, com a raiz alinhada no
-	// lado esquerdo da tela. Conforme aumenta o nivel do no, seu valor e
-	// impresso mais afastado do inicio da linha.
-		if (r == null) {
-			return;
-		}
-
-		// Processando a primeira subarvore
-		imprimeArv(r.getRef(ladoArv.esq), nivel + 1);
-		
-		// Fazendo o processamento do valor a imprimir
-		
-		// Ajustando o deslocamento horizontal na tela
-		for (int i = 0; i < nivel; i++)
-			System.out.printf("   ");
-	
-		// Imprimindo o valor e descendo uma linha
-		System.out.println(r.getValor() + (r.getQuant() > 1 ? " [" + r.getQuant() + "]" : ""));	
-		
-		// Processando a segunda subarvore
-		imprimeArv(r.getRef(ladoArv.dir), nivel + 1);
-	}
-	
-	public No pesquisaValor(int v) {
+    public No pesquisaValor(int v) {
 	// Rotina inicial para encaminhar a pesquisa.
 	
 		No procurado = new No(v);
 		return pesquisaValorRec(procurado, this.getRaiz());	
 	}
 
-	public ArrayList<No> pesquisaCaminho(int v){
-		ArrayList<No> caminho = new ArrayList<>();
-		No procurado = new No(v);
-
-		if(pesquisarCaminhoRec(procurado, this.getRaiz(), caminho))
-			return caminho;
-
-		return null;
-	}
-
-	public boolean pesquisarCaminhoRec(No procurado, No atual, ArrayList<No> caminho ){
-		if(atual == null)
-			return false;
-		caminho.add(atual);
-		if(atual.equals(procurado))
-			return true;
-		else
-			if(procurado.getValor() < atual.getValor())
-				return pesquisarCaminhoRec(procurado, atual.getRef(ladoArv.esq), caminho);
-			else
-				return pesquisarCaminhoRec(procurado, atual.getRef(ladoArv.dir), caminho);
-	}
-
-	public No pesquisaValorRec(No procurado, No atual) {
+    public No pesquisaValorRec(No procurado, No atual) {
 	// Pesquisa se um valor informado existe ou nao na arvore. Caso exista, 
 	// retorna sua referencia, caso nao exista, retorna nulo. Faz a busca de
 	// forma RECURSIVA (nao tem looping: a rotina chama a si mesma para 
@@ -216,14 +133,31 @@ public class ArvBinBuscaNum {
 			else
 				return pesquisaValorRec(procurado, atual.getRef(ladoArv.dir)	);
 	}
-	
-	public int contaNos(No r) {
-	// Retorna a quantidade de nos da arvore com raiz em r
-		if (r == null)
-			return 0;
-		else
-			return 1 
-					+ contaNos(r.getRef(ladoArv.esq)) 
-					+ contaNos(r.getRef(ladoArv.dir));
-	}
+
+    public void identificaHeap(No r) {
+    // Identifica se a arvore com raiz em r e uma arvore do tipo heap
+        if (r == null)
+            System.out.println("Arvore vazia");
+        else {
+            if (verificaHeap(r))
+                System.out.println("A arvore e do tipo heap");
+            else
+                System.out.println("A arvore nao e do tipo heap");
+        }
+    }
+
+    private boolean verificaHeap(No r) {
+    // Verifica se a arvore com raiz em r e uma arvore do tipo heap
+        if (r == null)
+            return true;
+        else {
+            if (r.getRef(ladoArv.esq) != null && r.getValor() < r.getRef(ladoArv.esq).getValor())
+                return false;
+            if (r.getRef(ladoArv.dir) != null && r.getValor() < r.getRef(ladoArv.dir).getValor())
+                return false;
+
+            return verificaHeap(r.getRef(ladoArv.esq)) && verificaHeap(r.getRef(ladoArv.dir));
+        }
+    }
 }
+
