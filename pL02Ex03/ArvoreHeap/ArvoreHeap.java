@@ -1,5 +1,8 @@
 package ArvoreHeap;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 public class ArvoreHeap {
     public enum ladoArv {esq, dir};
 
@@ -9,9 +12,6 @@ public class ArvoreHeap {
 		int valor;
 		No esq;
 		No dir;
-        int Max = 0;
-        int Min = 0;
-
 		public No(int v) {
 		// Construtor da classe, o no criado sera uma folha com o valor
 		// recebido
@@ -67,6 +67,16 @@ public class ArvoreHeap {
 		return (r == null);
 	}
 	
+	public String insereNos(String valores) {
+		// Insere varios nos na arvore
+		String[] vals = valores.split(" ");
+		
+		for (int i = 1; i < vals.length; i++) {
+			insereNo(Integer.parseInt(vals[i]));
+		}
+		return identificaHeap(this.getRaiz());
+	}
+
 	public boolean insereNo(int v) {
 	// Insere um novo no na arvore
 	// O novo no sera uma folha, com valor v
@@ -78,86 +88,83 @@ public class ArvoreHeap {
 			return false;
 
 		// Cuidando do encadeamento do novo no
-		No pai = this.achaPai(noh, this.getRaiz());
+		No pai = this.achaPai(this.getRaiz());
 
 		if (pai == null)
 			this.setRaiz(noh);
 		else
-            if(noh.getValor() <= pai.getValor()){
-                
-            }
-
+			if(pai.getRef(ladoArv.esq) == null)
+				pai.setRef(ladoArv.esq, noh);
+			else
+				pai.setRef(ladoArv.dir, noh);
 		
 			return true;
 	}
 	
-	private No achaPai(No novoNo, No candidato) {
+	private No achaPai(No r) {
 	// Retorna a referencia do ancestral imediato do novo no. Caso a arvore
 	// esteja vazia, retorna nulo. Executa o processamento de forma RECURSIVA
 	// (nao tem looping: a rotina chama a si mesma para prosseguir a busca)
+		if (r == null)
+			return null;
+
+		Queue<No> queue = new ArrayDeque<>();
+		No candidato = new No(0);
+
+		queue.offer(r);					// Colocando o no r na fila
+		while (!queue.isEmpty())
+		{	candidato = queue.poll();	// Retirando um no da fila
+
+			if (candidato.getRef(ladoArv.esq) != null)
+				queue.offer(candidato.getRef(ladoArv.esq));	// Enfileirando
+			else
+				break;
+			
+			if (candidato.getRef(ladoArv.dir) != null)
+				queue.offer(candidato.getRef(ladoArv.dir));	// Enfileirando
+			else
+				break;
+		}
+
+		return candidato;
 		
-		if (candidato == null)
-			return null;
-		else
-			if (novoNo.getValor() <= candidato.getValor())
-				if (candidato.getRef(ladoArv.esq) == null)
-					return candidato;
-				else
-					return achaPai(novoNo, candidato.getRef(ladoArv.esq));
-			else
-				if (candidato.getRef(ladoArv.dir) == null)
-					return candidato;
-				else
-					return achaPai(novoNo, candidato.getRef(ladoArv.dir));
 	}	
-
-    public No pesquisaValor(int v) {
-	// Rotina inicial para encaminhar a pesquisa.
-	
-		No procurado = new No(v);
-		return pesquisaValorRec(procurado, this.getRaiz());	
-	}
-
-    public No pesquisaValorRec(No procurado, No atual) {
-	// Pesquisa se um valor informado existe ou nao na arvore. Caso exista, 
-	// retorna sua referencia, caso nao exista, retorna nulo. Faz a busca de
-	// forma RECURSIVA (nao tem looping: a rotina chama a si mesma para 
-	// prosseguir a busca)
-		if (atual == null)				// Arvore vazia
-			return null;
-		if (atual.equals(procurado))
-			return atual;
-		else
-			if (procurado.getValor() < atual.getValor())
-				return pesquisaValorRec(procurado, atual.getRef(ladoArv.esq));
-			else
-				return pesquisaValorRec(procurado, atual.getRef(ladoArv.dir)	);
-	}
-
-    public void identificaHeap(No r) {
+    public String identificaHeap(No r) {
     // Identifica se a arvore com raiz em r e uma arvore do tipo heap
-        if (r == null)
-            System.out.println("Arvore vazia");
-        else {
-            if (verificaHeap(r))
-                System.out.println("A arvore e do tipo heap");
+            if (maxHeap(r))
+                return "max";
+            else if (minHeap(r))
+                return "min";
             else
-                System.out.println("A arvore nao e do tipo heap");
-        }
+                return "nada";
     }
 
-    private boolean verificaHeap(No r) {
-    // Verifica se a arvore com raiz em r e uma arvore do tipo heap
-        if (r == null)
-            return true;
-        else {
-            if (r.getRef(ladoArv.esq) != null && r.getValor() < r.getRef(ladoArv.esq).getValor())
-                return false;
-            if (r.getRef(ladoArv.dir) != null && r.getValor() < r.getRef(ladoArv.dir).getValor())
-                return false;
+	private boolean maxHeap(No r) {
+	// Verifica se a arvore com raiz em r e uma arvore do tipo max
+		if (r == null)
+			return true;
+		else {
+			if (r.getRef(ladoArv.esq) != null && r.getValor() < r.getRef(ladoArv.esq).getValor())
+				return false;
+			if (r.getRef(ladoArv.dir) != null && r.getValor() < r.getRef(ladoArv.dir).getValor())
+				return false;
 
-            return verificaHeap(r.getRef(ladoArv.esq)) && verificaHeap(r.getRef(ladoArv.dir));
-        }
-    }
+			return maxHeap(r.getRef(ladoArv.esq)) && maxHeap(r.getRef(ladoArv.dir));
+		}
+	}
+
+	private boolean minHeap(No r) {
+	// Verifica se a arvore com raiz em r e uma arvore do tipo min
+		if (r == null)
+			return true;
+		else {
+			if (r.getRef(ladoArv.esq) != null && r.getValor() > r.getRef(ladoArv.esq).getValor())
+				return false;
+			if (r.getRef(ladoArv.dir) != null && r.getValor() > r.getRef(ladoArv.dir).getValor())
+				return false;
+
+			return minHeap(r.getRef(ladoArv.esq)) && minHeap(r.getRef(ladoArv.dir));
+		}
+	}
 }
 

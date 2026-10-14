@@ -29,7 +29,7 @@ public class ArvoreNivel {
 		if (arv.arvoreVazia(arv.getRaiz()))
 			System.out.println("Arvore vazia");
 		else {
-//			arv.imprimeArvNvl(arv.getRaiz(), "Conteudo da arvore");
+			
 			System.out.println();
 			System.out.println("Resumo");
 			System.out.println("  Qtde nos: " + arv.contaNos(arv.getRaiz()));
