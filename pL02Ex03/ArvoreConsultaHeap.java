@@ -3,8 +3,8 @@ import ArvoreHeap.ArvoreHeap;
 
 public class ArvoreConsultaHeap {
     public static void main(String[] args) {
-       
-   
+
+
     Scanner sc = new Scanner(System.in);
     int quantidade = sc.nextInt();
     sc.nextLine();
